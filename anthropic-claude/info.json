@@ -1,0 +1,395 @@
+{
+  "name": "anthropic-claude",
+  "version": "1.0.0",
+  "label": "Anthropic Claude",
+  "description": "Anthropic Claude is a family of AI assistant models developed by Anthropic. This connector integrates FortiSOAR playbooks with Claude via the Anthropic Messages API, enabling AI-powered text generation, vision-based image analysis, multi-turn conversations, and token counting for cost management.",
+  "publisher": "Fortinet",
+  "category": [
+    "Utilities",
+    "LLM"
+  ],
+  "contributor": "Jaehwan Kim",
+  "active": true,
+  "cs_approved": false,
+  "cs_compatible": true,
+  "system": false,
+  "playbook_collections": [],
+  "icon_small": "",
+  "icon_large": "",
+  "help_online": "",
+  "vendor_version": null,
+  "icon_small_name": "small.png",
+  "icon_large_name": "large.png",
+  "id": 118,
+  "configuration": {
+    "fields": [
+      {
+        "title": "API Key",
+        "description": "Specify the Anthropic API key used to authenticate API requests. You can generate an API key from your Anthropic Console. The key is stored securely in encrypted form.",
+        "type": "password",
+        "name": "api_key",
+        "required": true,
+        "visible": true,
+        "editable": true,
+        "tooltip": "Specify the Anthropic API key used to authenticate API requests. You can generate an API key from your Anthropic Console. The key is stored securely in encrypted form."
+      },
+      {
+        "title": "Default Model",
+        "description": "Select the Claude model that will be used by default when a model is not specified in an action.",
+        "type": "select",
+        "name": "model",
+        "required": true,
+        "visible": true,
+        "editable": true,
+        "value": "claude-sonnet-4-6",
+        "tooltip": "Opus 4.7: most capable. Sonnet 4.6: balanced performance. Haiku 4.5: fastest and most economical.",
+        "options": [
+          "claude-opus-4-7",
+          "claude-sonnet-4-6",
+          "claude-sonnet-4-5",
+          "claude-haiku-4-5"
+        ]
+      },
+      {
+        "title": "Anthropic API Version",
+        "description": "Specify the Anthropic API version to use for requests. Leave the default value unless a different version is required by Anthropic.",
+        "type": "text",
+        "name": "anthropic_version",
+        "required": false,
+        "visible": true,
+        "editable": true,
+        "value": "2023-06-01",
+        "tooltip": "Specify the Anthropic API version to use for requests. Leave the default value unless a different version is required by Anthropic."
+      },
+      {
+        "title": "Verify SSL",
+        "description": "Enable SSL certificate verification when connecting to the Anthropic API. Disable only if using a trusted proxy or self-signed certificates.",
+        "type": "checkbox",
+        "name": "verify_ssl",
+        "required": false,
+        "visible": true,
+        "editable": true,
+        "value": true,
+        "tooltip": "Enable SSL certificate verification when connecting to the Anthropic API. Disable only if using a trusted proxy or self-signed certificates."
+      }
+    ]
+  },
+  "operations": [
+    {
+      "operation": "send_message",
+      "title": "Send Message",
+      "description": "Sends a prompt to the Anthropic Claude Messages API and returns the generated response. Supports optional system prompts, conversation history, model selection, temperature, token limits, and stop sequences.",
+      "category": "investigation",
+      "annotation": "send_message",
+      "enabled": true,
+      "parameters": [
+        {
+          "title": "Prompt",
+          "description": "The input prompt or question to send to Claude.",
+          "type": "textarea",
+          "name": "prompt",
+          "required": true,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Specify the message, question, or instructions that Claude should respond to."
+        },
+        {
+          "title": "System Prompt",
+          "description": "Provides high-level instructions that guide Claude's behavior throughout the conversation.",
+          "type": "textarea",
+          "name": "system_prompt",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Use a system prompt to define Claude's role, response style, constraints, or task before processing the user prompt."
+        },
+        {
+          "title": "Model",
+          "description": "Specifies the Claude model to use for generating the response.",
+          "type": "select",
+          "name": "model",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Select a model for this request. If left empty, the default model configured in the connector will be used.",
+          "options": [
+            "claude-opus-4-7",
+            "claude-sonnet-4-6",
+            "claude-sonnet-4-5",
+            "claude-haiku-4-5"
+          ]
+        },
+        {
+          "title": "Max Tokens",
+          "description": "Limits the maximum number of tokens Claude can generate in the response.",
+          "type": "integer",
+          "name": "max_tokens",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "value": 1024,
+          "tooltip": "Specify the maximum response length. Larger values allow longer responses but consume more tokens."
+        },
+        {
+          "title": "Temperature",
+          "description": "Controls the randomness and creativity of the generated response.",
+          "type": "text",
+          "name": "temperature",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Use values between 0.0 and 1.0. Lower values produce more consistent responses, while higher values generate more diverse and creative output."
+        },
+        {
+          "title": "Stop Sequences",
+          "description": "Defines one or more text sequences that cause Claude to stop generating output.",
+          "type": "text",
+          "name": "stop_sequences",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide one or more stop sequences to terminate generation when they are encountered. Useful for structured responses."
+        },
+        {
+          "title": "Conversation History",
+          "description": "Supplies previous conversation messages to maintain context across multiple interactions.",
+          "type": "json",
+          "name": "conversation_history",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "JSON array of prior messages, e.g. [{\"role\":\"user\",\"content\":\"Hello\"},{\"role\":\"assistant\",\"content\":\"Hi!\"}]. The current Prompt is appended automatically."
+        }
+      ],
+      "output_schema": {
+        "id": "",
+        "model": "",
+        "role": "",
+        "content": "",
+        "content_blocks": [
+          {
+            "type": "",
+            "text": ""
+          }
+        ],
+        "stop_reason": "",
+        "stop_sequence": "",
+        "usage": {
+          "input_tokens": "",
+          "output_tokens": ""
+        },
+        "input_tokens": "",
+        "output_tokens": ""
+      },
+      "open": false
+    },
+    {
+      "operation": "chat_with_image",
+      "title": "Chat with Image",
+      "description": "Analyze an image using Anthropic Claude by providing a prompt with either an image URL or base64-encoded image data. Use this operation to extract information, interpret diagrams, analyze screenshots, review documents, or answer questions about image content.",
+      "category": "investigation",
+      "annotation": "chat_with_image",
+      "enabled": true,
+      "parameters": [
+        {
+          "title": "Prompt",
+          "description": "The question or instruction describing what Claude should analyze in the image.",
+          "type": "textarea",
+          "name": "prompt",
+          "required": true,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Specify the question or instructions for Claude about the supplied image."
+        },
+        {
+          "title": "Image URL",
+          "description": "Publicly accessible URL of the image to analyze.",
+          "type": "text",
+          "name": "image_url",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a direct image URL. Specify either Image URL or Base64 Image Data."
+        },
+        {
+          "title": "Base64 Image Data",
+          "description": "Base64-encoded image content for analysis.",
+          "type": "textarea",
+          "name": "image_base64",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Paste the Base64-encoded image. Specify either Base64 Image Data or Image URL."
+        },
+        {
+          "title": "Media Type",
+          "type": "select",
+          "description": "MIME type of the Base64-encoded image.",
+          "name": "media_type",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "value": "image/jpeg",
+          "tooltip": "Select the MIME type that matches the Base64 image being provided.",
+          "options": [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp"
+          ]
+        },
+        {
+          "title": "System Prompt",
+          "description": "Instructions that define Claude's behavior while processing the request.",
+          "type": "textarea",
+          "name": "system_prompt",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide optional instructions to guide Claude's analysis, tone, or response style."
+        },
+        {
+          "title": "Model",
+          "description": "Claude model used to process the request.",
+          "type": "select",
+          "name": "model",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Leave blank to use the default model configured for the connector.",
+          "options": [
+            "claude-opus-4-7",
+            "claude-sonnet-4-6",
+            "claude-sonnet-4-5",
+            "claude-haiku-4-5"
+          ]
+        },
+        {
+          "title": "Max Tokens",
+          "description": "Maximum number of tokens Claude can generate in the response.",
+          "type": "integer",
+          "name": "max_tokens",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "value": 1024,
+          "tooltip": "Specify the maximum response length. Larger values allow longer responses but consume more tokens."
+        },
+        {
+          "title": "Temperature",
+          "description": "Controls the randomness of the generated response.",
+          "type": "text",
+          "name": "temperature",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Use lower values for consistent responses and higher values for more creative output. Leave empty to use the API default."
+        }
+      ],
+      "output_schema": {
+        "id": "",
+        "model": "",
+        "role": "",
+        "content": "",
+        "content_blocks": [
+          {
+            "type": "",
+            "text": ""
+          }
+        ],
+        "stop_reason": "",
+        "usage": {
+          "input_tokens": "",
+          "output_tokens": ""
+        },
+        "input_tokens": "",
+        "output_tokens": ""
+      },
+      "open": false
+    },
+    {
+      "operation": "count_tokens",
+      "title": "Count Tokens",
+      "description": "Calculate the number of input tokens for a prompt before sending it to the Anthropic API. This helps estimate token usage, manage costs, and ensure requests remain within the selected model's context window.",
+      "category": "investigation",
+      "annotation": "count_tokens",
+      "enabled": true,
+      "parameters": [
+        {
+          "title": "Prompt",
+          "description": "The primary message or input text for which the token count should be calculated.",
+          "type": "textarea",
+          "name": "prompt",
+          "required": true,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Enter the text you plan to send to Claude. The connector calculates the number of input tokens required for this prompt."
+        },
+        {
+          "title": "System Prompt",
+          "description": "Optional instructions that define Claude's behavior or response style. Included when calculating the total input token count.",
+          "type": "textarea",
+          "name": "system_prompt",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide system-level instructions if they will be included in the request. This ensures the token count reflects the complete API payload."
+        },
+        {
+          "title": "Model",
+          "description": "The Claude model to use for token calculation. If omitted, the connector's default model is used.",
+          "type": "select",
+          "name": "model",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Select the Claude model that will process the request so the token count matches the target model's tokenizer.",
+          "options": [
+            "claude-opus-4-7",
+            "claude-sonnet-4-6",
+            "claude-sonnet-4-5",
+            "claude-haiku-4-5"
+          ]
+        },
+        {
+          "title": "Conversation History",
+          "description": "Optional JSON array containing previous user and assistant messages to include in the token calculation.",
+          "type": "json",
+          "name": "conversation_history",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide prior conversation messages in JSON format to calculate the total tokens for a multi-turn conversation, including the current prompt."
+        }
+      ],
+      "output_schema": {
+        "input_tokens": "",
+        "model": ""
+      },
+      "open": false
+    },
+    {
+      "operation": "list_models",
+      "title": "List Models",
+      "description": "Retrieve the Claude models available for the configured Anthropic API key, including each model's identifier, display name, and creation date.",
+      "category": "investigation",
+      "annotation": "list_models",
+      "enabled": true,
+      "parameters": [],
+      "output_schema": {
+        "data": [
+          {
+            "type": "",
+            "id": "",
+            "display_name": "",
+            "created_at": ""
+          }
+        ],
+        "has_more": "",
+        "first_id": "",
+        "last_id": ""
+      },
+      "open": false
+    }
+  ]
+}
