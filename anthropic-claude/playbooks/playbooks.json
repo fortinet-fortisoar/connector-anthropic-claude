@@ -4,11 +4,11 @@
     {
       "@type": "WorkflowCollection",
       "name": "Sample - Anthropic Claude - 1.0.0",
-      "description": "Anthropic Claude is a family of AI assistant models developed by Anthropic. This connector integrates FortiSOAR playbooks with Claude via the Anthropic Messages API, enabling AI-powered text generation, vision-based image analysis, multi-turn conversations, and token counting for cost management.",
+      "description": "Sample playbooks for \"Anthropic Claude\" connector. If you are planning to use any of the sample playbooks in your environment, ensure that you clone those playbooks and move them to a different collection, since the sample playbook collection gets deleted during connector upgrade and delete.",
       "visible": true,
       "image": null,
       "uuid": "900e665b-b777-44bd-9156-4e12fb0c207c",
-      "id": 154,
+      "id": 296,
       "deletedAt": null,
       "importedBy": [],
       "recordTags": [
@@ -29,7 +29,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1783693679,
+          "lastModifyDate": 1790774350,
           "collection": "/api/3/workflow_collections/900e665b-b777-44bd-9156-4e12fb0c207c",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/7dccd526-fa5b-41c5-a649-506ff1608790",
@@ -41,7 +41,11 @@
               "arguments": {
                 "name": "Anthropic Claude",
                 "config": "67f9dcc6-8507-413f-9364-386e4ba92ea9",
-                "params": [],
+                "params": {
+                  "limit": "",
+                  "after_id": "",
+                  "before_id": ""
+                },
                 "version": "1.0.0",
                 "connector": "anthropic-claude",
                 "operation": "list_models",
@@ -95,13 +99,108 @@
           "playbookOrigin": "/api/3/picklists/15c1e8c9-22bf-4e66-8fbb-0a502d4a4a3f",
           "isEditable": true,
           "uuid": "11745ffc-dae4-4ad4-9c7d-f17603050dc5",
-          "id": 2653,
+          "id": 4705,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
           "recordTags": [
-            "anthropic-claude"
+            "anthropic-claude",
+            "Anthropic Claude"
+          ]
+        },
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "Execute API Request",
+          "aliasName": null,
+          "tag": null,
+          "description": "Send an arbitrary HTTP request to any Anthropic API endpoint. Use this advanced operation to call endpoints and HTTP methods not covered by the other operations (for example, message batches, files, or beta endpoints).",
+          "isActive": false,
+          "debug": false,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [],
+          "synchronous": false,
+          "lastModifyDate": 1791173710,
+          "collection": "/api/3/workflow_collections/900e665b-b777-44bd-9156-4e12fb0c207c",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/e33a1fdd-8867-4c6b-8364-78e023cc1831",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "Execute API Request",
+              "description": null,
+              "arguments": {
+                "name": "Anthropic Claude",
+                "config": "f979e5ff-23cd-42ae-ad0e-b9b3a29a1193",
+                "params": {
+                  "method": "GET",
+                  "payload": "",
+                  "endpoint": "/v1/models",
+                  "query_parameters": ""
+                },
+                "version": "1.0.0",
+                "connector": "anthropic-claude",
+                "operation": "execute_api_request",
+                "operationTitle": "Execute API Request",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "165",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "group": null,
+              "uuid": "aa11d558-78f4-4725-a26b-776b604e3d02"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Start",
+              "description": null,
+              "arguments": {
+                "__triggerLimit": true,
+                "step_variables": {
+                  "input": {
+                    "params": []
+                  }
+                },
+                "triggerOnSource": true,
+                "triggerOnReplicate": false
+              },
+              "status": null,
+              "top": "30",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+              "group": null,
+              "uuid": "e33a1fdd-8867-4c6b-8364-78e023cc1831"
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "Start -> Execute API Reques",
+              "targetStep": "/api/3/workflow_steps/aa11d558-78f4-4725-a26b-776b604e3d02",
+              "sourceStep": "/api/3/workflow_steps/e33a1fdd-8867-4c6b-8364-78e023cc1831",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "a5c34604-b875-43b2-9143-9985c0432fed"
+            }
+          ],
+          "groups": [],
+          "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+          "playbookOrigin": "/api/3/picklists/15c1e8c9-22bf-4e66-8fbb-0a502d4a4a3f",
+          "isEditable": true,
+          "uuid": "599fc89c-712b-4b5d-9c16-52e76f318802",
+          "id": 4753,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
+          "recordTags": [
+            "anthropic-claude",
+            "Anthropic Claude"
           ]
         },
         {
@@ -117,7 +216,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1783693631,
+          "lastModifyDate": 1790774555,
           "collection": "/api/3/workflow_collections/900e665b-b777-44bd-9156-4e12fb0c207c",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/7d80939c-7ee5-45f9-a1f4-5e509261caad",
@@ -132,6 +231,7 @@
                 "params": {
                   "prompt": "Hello",
                   "system_prompt": "",
+                  "additional_params": "",
                   "conversation_history": ""
                 },
                 "version": "1.0.0",
@@ -187,13 +287,14 @@
           "playbookOrigin": "/api/3/picklists/15c1e8c9-22bf-4e66-8fbb-0a502d4a4a3f",
           "isEditable": true,
           "uuid": "6891bf5c-cada-4fc8-b23f-e3b135e3796b",
-          "id": 2652,
+          "id": 4706,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
           "recordTags": [
-            "anthropic-claude"
+            "anthropic-claude",
+            "Anthropic Claude"
           ]
         },
         {
@@ -209,7 +310,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1783693578,
+          "lastModifyDate": 1790775181,
           "collection": "/api/3/workflow_collections/900e665b-b777-44bd-9156-4e12fb0c207c",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/0da0ef28-1278-4d1a-bf45-c131582cce69",
@@ -283,13 +384,14 @@
           "playbookOrigin": "/api/3/picklists/15c1e8c9-22bf-4e66-8fbb-0a502d4a4a3f",
           "isEditable": true,
           "uuid": "be8f0969-e6f8-4530-9da3-0de589fefe6b",
-          "id": 2651,
+          "id": 4707,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
           "recordTags": [
-            "anthropic-claude"
+            "anthropic-claude",
+            "Anthropic Claude"
           ]
         },
         {
@@ -305,7 +407,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1783693490,
+          "lastModifyDate": 1790775166,
           "collection": "/api/3/workflow_collections/900e665b-b777-44bd-9156-4e12fb0c207c",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/88a05dcc-cdb1-4475-95b7-c9079133ffcb",
@@ -323,6 +425,7 @@
                   "temperature": "",
                   "system_prompt": "",
                   "stop_sequences": "",
+                  "additional_params": "",
                   "conversation_history": ""
                 },
                 "version": "1.0.0",
@@ -378,13 +481,14 @@
           "playbookOrigin": "/api/3/picklists/15c1e8c9-22bf-4e66-8fbb-0a502d4a4a3f",
           "isEditable": true,
           "uuid": "c6836ffb-55ec-4be8-8c21-c06f0b163792",
-          "id": 2650,
+          "id": 4708,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
           "recordTags": [
-            "anthropic-claude"
+            "anthropic-claude",
+            "Anthropic Claude"
           ]
         }
       ]
