@@ -4,23 +4,13 @@
   "label": "Anthropic Claude",
   "description": "Anthropic Claude is a family of AI assistant models developed by Anthropic. This connector integrates FortiSOAR playbooks with Claude via the Anthropic Messages API, enabling AI-powered text generation, vision-based image analysis, multi-turn conversations, and token counting for cost management.",
   "publisher": "Fortinet",
-  "category": [
-    "Utilities",
-    "LLM"
-  ],
+  "category": "Generative AI",
   "contributor": "Jaehwan Kim",
-  "active": true,
-  "cs_approved": false,
+  "cs_approved": true,
   "cs_compatible": true,
-  "system": false,
-  "playbook_collections": [],
-  "icon_small": "",
-  "icon_large": "",
   "help_online": "",
-  "vendor_version": null,
   "icon_small_name": "small.png",
   "icon_large_name": "large.png",
-  "id": 118,
   "configuration": {
     "fields": [
       {
@@ -42,7 +32,7 @@
         "visible": true,
         "editable": true,
         "value": "claude-sonnet-4-6",
-        "tooltip": "Opus 4.7: most capable. Sonnet 4.6: balanced performance. Haiku 4.5: fastest and most economical.",
+        "tooltip": "Opus 4.7: most capable. Sonnet 4.6 / 4.5: balanced performance. Haiku 4.5: fastest and most economical.",
         "options": [
           "claude-opus-4-7",
           "claude-sonnet-4-6",
@@ -78,7 +68,7 @@
     {
       "operation": "send_message",
       "title": "Send Message",
-      "description": "Sends a prompt to the Anthropic Claude Messages API and returns the generated response. Supports optional system prompts, conversation history, model selection, temperature, token limits, and stop sequences.",
+      "description": "Sends a prompt to the Anthropic Claude Messages API and returns the generated response. Supports optional system prompts, conversation history, model selection, temperature, token limits, stop sequences, and arbitrary additional request fields via Additional Parameters.",
       "category": "investigation",
       "annotation": "send_message",
       "enabled": true,
@@ -148,7 +138,7 @@
           "required": false,
           "visible": true,
           "editable": true,
-          "tooltip": "Provide one or more stop sequences to terminate generation when they are encountered. Useful for structured responses."
+          "tooltip": "Provide one or more stop sequences, comma-separated (for example: \"\\n\\nHuman:\", \"END\"). Generation stops when any of these sequences is encountered. Useful for structured responses."
         },
         {
           "title": "Conversation History",
@@ -159,6 +149,16 @@
           "visible": true,
           "editable": true,
           "tooltip": "JSON array of prior messages, e.g. [{\"role\":\"user\",\"content\":\"Hello\"},{\"role\":\"assistant\",\"content\":\"Hi!\"}]. The current Prompt is appended automatically."
+        },
+        {
+          "title": "Additional Parameters",
+          "description": "Optional JSON object of extra fields to include in the request payload (for example: top_p, top_k, metadata, tools, thinking, tool_choice, service_tier). Merged directly into the request body.",
+          "type": "json",
+          "name": "additional_params",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a JSON object with any extra fields supported by the /v1/messages endpoint. Example: {\"top_p\": 0.9, \"metadata\": {\"user_id\": \"u-123\"}}. These fields are merged into the request payload."
         }
       ],
       "output_schema": {
@@ -186,7 +186,7 @@
     {
       "operation": "chat_with_image",
       "title": "Chat with Image",
-      "description": "Analyze an image using Anthropic Claude by providing a prompt with either an image URL or base64-encoded image data. Use this operation to extract information, interpret diagrams, analyze screenshots, review documents, or answer questions about image content.",
+      "description": "Analyze an image using Anthropic Claude by providing a prompt with either an image URL or base64-encoded image data. Use this operation to extract information, interpret diagrams, analyze screenshots, review documents, or answer questions about image content. Supports optional system prompts, model selection, temperature, token limits, and arbitrary additional request fields via Additional Parameters.",
       "category": "investigation",
       "annotation": "chat_with_image",
       "enabled": true,
@@ -284,6 +284,16 @@
           "visible": true,
           "editable": true,
           "tooltip": "Use lower values for consistent responses and higher values for more creative output. Leave empty to use the API default."
+        },
+        {
+          "title": "Additional Parameters",
+          "description": "Optional JSON object of extra fields to include in the request payload (for example: stop_sequences, top_p, top_k, metadata, tools, thinking, tool_choice). Merged directly into the request body.",
+          "type": "json",
+          "name": "additional_params",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a JSON object with any extra fields supported by the /v1/messages endpoint. Example: {\"top_p\": 0.9, \"metadata\": {\"user_id\": \"u-123\"}}. These fields are merged into the request payload."
         }
       ],
       "output_schema": {
@@ -298,6 +308,7 @@
           }
         ],
         "stop_reason": "",
+        "stop_sequence": "",
         "usage": {
           "input_tokens": "",
           "output_tokens": ""
@@ -310,7 +321,7 @@
     {
       "operation": "count_tokens",
       "title": "Count Tokens",
-      "description": "Calculate the number of input tokens for a prompt before sending it to the Anthropic API. This helps estimate token usage, manage costs, and ensure requests remain within the selected model's context window.",
+      "description": "Calculate the number of input tokens for a prompt before sending it to the Anthropic API. This helps estimate token usage, manage costs, and ensure requests remain within the selected model's context window. Supports system prompts, conversation history, and arbitrary additional request fields via Additional Parameters.",
       "category": "investigation",
       "annotation": "count_tokens",
       "enabled": true,
@@ -360,6 +371,16 @@
           "visible": true,
           "editable": true,
           "tooltip": "Provide prior conversation messages in JSON format to calculate the total tokens for a multi-turn conversation, including the current prompt."
+        },
+        {
+          "title": "Additional Parameters",
+          "description": "Optional JSON object of extra fields to include in the count_tokens request payload (for example: tools, thinking, tool_choice, cache_control, output_config). Merged directly into the request body.",
+          "type": "json",
+          "name": "additional_params",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a JSON object with any extra fields supported by the /v1/messages/count_tokens endpoint. Example: {\"tools\": [{\"name\": \"get_weather\", \"description\": \"...\", \"input_schema\": {...}}]}. These fields are merged into the request payload."
         }
       ],
       "output_schema": {
@@ -371,24 +392,178 @@
     {
       "operation": "list_models",
       "title": "List Models",
-      "description": "Retrieve the Claude models available for the configured Anthropic API key, including each model's identifier, display name, and creation date.",
+      "description": "Retrieve the Claude models available for the configured Anthropic API key, including each model's identifier, display name, and creation date. Supports pagination via limit, before_id, and after_id.",
       "category": "investigation",
       "annotation": "list_models",
       "enabled": true,
-      "parameters": [],
+      "parameters": [
+        {
+          "title": "Limit",
+          "description": "Maximum number of models to return (1-1000). Leave empty to use the API default of 20.",
+          "type": "integer",
+          "name": "limit",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Specify the maximum number of models to return per request. Valid range: 1-1000."
+        },
+        {
+          "title": "Before ID",
+          "description": "Cursor for backwards pagination. Returns the page of results immediately before the specified model ID.",
+          "type": "text",
+          "name": "before_id",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a model ID to fetch the page of models that ends just before it. Cannot be combined with After ID."
+        },
+        {
+          "title": "After ID",
+          "description": "Cursor for forwards pagination. Returns the page of results immediately after the specified model ID.",
+          "type": "text",
+          "name": "after_id",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a model ID to fetch the page of models that starts just after it. Cannot be combined with Before ID."
+        }
+      ],
       "output_schema": {
         "data": [
           {
-            "type": "",
             "id": "",
+            "type": "",
+            "created_at": "",
+            "max_tokens": "",
+            "capabilities": {
+              "batch": {
+                "supported": ""
+              },
+              "effort": {
+                "low": {
+                  "supported": ""
+                },
+                "max": {
+                  "supported": ""
+                },
+                "high": {
+                  "supported": ""
+                },
+                "xhigh": {
+                  "supported": ""
+                },
+                "medium": {
+                  "supported": ""
+                },
+                "supported": ""
+              },
+              "thinking": {
+                "types": {
+                  "enabled": {
+                    "supported": ""
+                  },
+                  "adaptive": {
+                    "supported": ""
+                  }
+                },
+                "supported": ""
+              },
+              "citations": {
+                "supported": ""
+              },
+              "pdf_input": {
+                "supported": ""
+              },
+              "image_input": {
+                "supported": ""
+              },
+              "code_execution": {
+                "supported": ""
+              },
+              "context_management": {
+                "supported": "",
+                "compact_20260112": {
+                  "supported": ""
+                },
+                "clear_thinking_20251015": {
+                  "supported": ""
+                },
+                "clear_tool_uses_20250919": {
+                  "supported": ""
+                }
+              },
+              "structured_outputs": {
+                "supported": ""
+              }
+            },
             "display_name": "",
-            "created_at": ""
+            "max_input_tokens": ""
           }
         ],
-        "has_more": "",
+        "last_id": "",
         "first_id": "",
-        "last_id": ""
+        "has_more": ""
       },
+      "open": false
+    },
+    {
+      "operation": "execute_api_request",
+      "title": "Execute API Request",
+      "description": "Send an arbitrary HTTP request to any Anthropic API endpoint. Use this advanced operation to call endpoints and HTTP methods not covered by the other operations (for example, message batches, files, or beta endpoints).",
+      "category": "investigation",
+      "annotation": "execute_api_request",
+      "enabled": true,
+      "parameters": [
+        {
+          "title": "HTTP Method",
+          "description": "HTTP method to use for the request.",
+          "type": "select",
+          "name": "method",
+          "required": true,
+          "visible": true,
+          "editable": true,
+          "value": "GET",
+          "tooltip": "Select the HTTP method. GET and DELETE ignore any Request Payload.",
+          "options": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        },
+        {
+          "title": "Endpoint",
+          "description": "API endpoint path, beginning with a forward slash (for example, /v1/messages).",
+          "type": "text",
+          "name": "endpoint",
+          "required": true,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide the endpoint path relative to the Anthropic API base (https://api.anthropic.com). For example: /v1/messages, /v1/files, /v1/messages/batches."
+        },
+        {
+          "title": "Query Parameters",
+          "description": "Optional JSON object of query string parameters to append to the request URL.",
+          "type": "json",
+          "name": "query_parameters",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a JSON object whose key-value pairs become query parameters. Example: {\"limit\": 20, \"before_id\": \"claude-haiku-4-5\"}. Values are URL-encoded automatically."
+        },
+        {
+          "title": "Request Payload",
+          "description": "Optional JSON object sent as the request body. Ignored for GET and DELETE.",
+          "type": "json",
+          "name": "payload",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "tooltip": "Provide a JSON object that becomes the request body. Must be a JSON object (not an array or scalar). Ignored when HTTP Method is GET or DELETE."
+        }
+      ],
+      "output_schema": {},
       "open": false
     }
   ]
